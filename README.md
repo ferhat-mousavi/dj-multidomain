@@ -6,7 +6,7 @@ This middleware allows Django projects to route requests to different URL config
 Installation
 1. **Install the package using pip:**
 ```
-   pip install mymiddleware
+   pip install dj-multidomain
 ```
 2. **Add the Middleware to your Django settings:**
 ```
