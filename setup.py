@@ -5,12 +5,12 @@ setup(
     version='0.1',
     packages=find_packages(),
     install_requires=[
-        'django',  # Diğer bağımlılıklarınız varsa buraya ekleyin
+        'django',
     ],
     author='Ferhat Mousavi',
-    author_email='ferhat.mousavi@gmail.com',  # Gerçek e-posta adresinizi kullanın
+    author_email='ferhat.mousavi@gmail.com',
     description='A Django middleware to handle multiple domains.',
     long_description=open('README.md').read(),
     long_description_content_type="text/markdown",
-    url='https://github.com/yourusername/mymiddleware',  # GitHub repo URL'nizi ekleyin
+    url='https://github.com/ferhat-mousavi/dj-multidomain',
 )
