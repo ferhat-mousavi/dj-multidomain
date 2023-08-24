@@ -3,7 +3,12 @@
 ## Multiple Domain Middleware for Django
 This middleware allows Django projects to route requests to different URL configurations based on the request's domain. It is especially useful for projects hosted on multiple domains. Developed by Ferhat Mousavi.
 
-Installation
+## Supported (tested) Versions
+
+- Python: 3.10 and above
+- Django: 4 and above
+
+## Installation
 1. **Install the package using pip:**
 ```
    pip install dj-multidomain
