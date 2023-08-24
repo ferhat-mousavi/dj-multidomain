@@ -24,9 +24,26 @@ MULTI_DOMAIN_CONFIG = {
     ...
 }
 ```
+sample `path.to.urls_for_domain1` file
+```
+from django.urls import path, include
+
+urlpatterns = [
+    path('', include('domain1_app.urls')),
+]
+```
 4. **(Optional) For common URLs accessible from any domain, specify the COMMON_URLS setting:**
 ```
 COMMON_URLS = 'path.to.common_urls'
+```
+sample `path.to.common_urls` file
+```
+from django.contrib import admin
+from django.urls import path
+
+urlpatterns = [
+    path('admin/', admin.site.urls),
+]
 ```
 5. **(Optional) If you are in DEBUG mode and want a fallback for unrecognized domains, specify the DEFAULT_DOMAIN setting:**
 ```
