@@ -1,7 +1,7 @@
 # Developed by Ferhat Mousavi
 from django.conf import settings
 from django.http import HttpResponseNotFound
-from django.urls import get_resolver
+from django.urls import path, include
 
 
 class MultipleDomainMiddleware:
@@ -18,9 +18,9 @@ class MultipleDomainMiddleware:
 
     def process_request(self, request):
         """
-        Processes the request to determine which URL configuration should be used.
-        Initially checks the common URLs (from settings.COMMON_URLS), and if none match,
-        it checks the domain-specific configuration.
+        This method determines which URL configuration should be used for the incoming request.
+        Depending on the domain of the request, it dynamically merges domain-specific URLs with
+        the common URLs defined in settings.COMMON_URLS (if available).
         """
         if not self.url_config:
             return False
@@ -33,33 +33,41 @@ class MultipleDomainMiddleware:
             host_list = host_list[-2:]
         host = f"{host_list[0]}.{host_list[1]}"  # Trim subdomains
 
-        # Firstly, check the common URLs
-        match = None
-        try:
-            resolver = get_resolver(settings.COMMON_URLS)  # Reference to the module containing common URLs
-            try:
-                match = resolver.resolve(request.path_info)
-            except:
-                pass
-
-            if match:
-                request.urlconf = settings.COMMON_URLS
-                return True  # If a match is found in the common URLs, continue processing the request
-        except:
-            pass
+        # Check if COMMON_URLS is defined in settings.
+        common_urls = getattr(settings, 'COMMON_URLS', None)
 
         # If the domain isn't in self.url_config and DEBUG is True, use DEFAULT_DOMAIN
-        if host not in self.url_config and settings.DEBUG:
-            request.urlconf = self.url_config[getattr(settings, 'DEFAULT_DOMAIN')]
+        # Retrieve the URL configuration module for the specific domain.
+        combined_urlpatterns = []
+        specific_urls_module = self.url_config.get(host, None)
+        if not specific_urls_module and settings.DEBUG:
+            # Fallback to default domain configuration if DEBUG is True and domain was not found
+            default_urls_module = self.url_config.get(settings.DEFAULT_DOMAIN,
+                                                      None)  # Get the actual URL module for the default domain
+            if default_urls_module:
+                combined_urlpatterns.append(path('', include(default_urls_module)))
+
+        if specific_urls_module:
+            # Dynamically merge the domain-specific URLs with the common URLs.
+            combined_urlpatterns.append(path('', include(specific_urls_module)))
+
+        # Add COMMON_URLS if it's available
+        if common_urls:
+            combined_urlpatterns.append(path('', include(common_urls)))
+
+        # Create a temporary URL configuration module to hold the combined URLs.
+        # This approach allows the creation of a dynamic URL configuration without
+        # having to modify the actual URL modules.
+        if combined_urlpatterns:
+            module_name_base = specific_urls_module if specific_urls_module else host
+            temp_urlconf_module = type(f"{module_name_base}_with_common", (object,),
+                                       {
+                                           "urlpatterns": combined_urlpatterns
+                                       }
+                                       )
+
+            # Assign the new dynamic URL configuration to the request.
+            request.urlconf = temp_urlconf_module
             return True
 
-        # Use the domain-specific URL configuration
-        if host in self.url_config:
-            request.urlconf = self.url_config[host]
-        else:
-            if not settings.DEBUG:  # If DEBUG is False, do not use the DEFAULT_DOMAIN
-                return False
-            # Fallback to default domain configuration if DEBUG is True and domain was not found
-            request.urlconf = self.url_config[getattr(settings, 'DEFAULT_DOMAIN')]
-
-        return True
+        return False
