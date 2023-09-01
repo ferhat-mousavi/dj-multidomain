@@ -8,10 +8,10 @@ setup(
         'django>=4.0',
     ],
     classifiers=[
-        'Development Status :: 2 - Beta',
+        "Development Status :: 4 - Beta",
         'Intended Audience :: Developers',
         'Topic :: Software Development :: Libraries :: Python Modules',
-        'License :: OSI Approved :: GNU License',
+        "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
         'Programming Language :: Python :: 3',
         'Programming Language :: Python :: 3.10',
         'Programming Language :: Python :: 3.11',
