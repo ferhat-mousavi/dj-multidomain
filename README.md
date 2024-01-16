@@ -8,6 +8,9 @@ This middleware allows Django projects to route requests to different URL config
 - Python: 3.10 and above
 - Django: 4 and above
 
+## Sample Project
+[dj-multidomain example](https://github.com/ferhat-mousavi/dj-multidomain-example)
+
 ## Installation
 1. **Install the package using pip:**
 ```
