@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='dj-multidomain',
-    version='0.2.0',
+    version='0.3.0',
     packages=find_packages(),
     install_requires=[
         'django>=4.0',
@@ -15,10 +15,12 @@ setup(
         'Programming Language :: Python :: 3',
         'Programming Language :: Python :: 3.10',
         'Programming Language :: Python :: 3.11',
+        'Programming Language :: Python :: 3.12',
         'Framework :: Django',
         'Framework :: Django :: 4.0',
         'Framework :: Django :: 4.1',
         'Framework :: Django :: 4.2',
+        'Framework :: Django :: 5.0',
     ],
     author='Ferhat Mousavi',
     author_email='ferhat.mousavi@gmail.com',
