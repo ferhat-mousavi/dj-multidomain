@@ -33,8 +33,7 @@ MIDDLEWARE = [
 ]
 ```
 
-3. **Configure the domains and their associated URL configurations in settings.py using the MULTI_DOMAIN_CONFIG setting:
-   **
+3. **Configure the domains and their associated URL configurations in settings.py using the MULTI_DOMAIN_CONFIG setting:**
 
 ```
 MULTI_DOMAIN_CONFIG = {
