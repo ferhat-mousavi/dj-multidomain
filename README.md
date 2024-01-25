@@ -43,6 +43,16 @@ MULTI_DOMAIN_CONFIG = {
 }
 ```
 
+sample `path.to.urls_for_domain1` file
+
+```
+from django.urls import path, include
+
+urlpatterns = [
+    path('', include('domain1_app.urls')),
+]
+```
+
 4. **(Optional for redirect domains)Configure the domains and their associated domain configurations in settings.py
    using the MULTI_REDIRECT_CONFIG setting:**
 
@@ -54,17 +64,7 @@ MULTI_REDIRECT_CONFIG = {
 }
 ```
 
-sample `path.to.urls_for_domain1` file
-
-```
-from django.urls import path, include
-
-urlpatterns = [
-    path('', include('domain1_app.urls')),
-]
-```
-
-4. **(Optional) For common URLs accessible from any domain, specify the COMMON_URLS setting:**
+5. **(Optional) For common URLs accessible from any domain, specify the COMMON_URLS setting:**
 
 ```
 COMMON_URLS = 'path.to.common_urls'
@@ -81,7 +81,7 @@ urlpatterns = [
 ]
 ```
 
-5. **(Optional) If you are in DEBUG mode and want a fallback for unrecognized domains, specify the DEFAULT_DOMAIN
+6. **(Optional) If you are in DEBUG mode and want a fallback for unrecognized domains, specify the DEFAULT_DOMAIN
    setting:**
 
 ```
