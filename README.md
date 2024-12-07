@@ -1,99 +1,223 @@
+### Redesigned README for `dj-multidomain`
+
+---
+
 # dj-multidomain
 
-## Multiple Domain Middleware for Django
+## Dynamic Multi-Domain Middleware for Django
 
-This middleware enables Django projects to route requests to different URL configurations based on the domain of the
-incoming request. It offers both domain-based URL routing and automatic redirection to another domain for specific
-domains. It's particularly useful for projects hosted across multiple domains. Developed by Ferhat Mousavi.
+`dj-multidomain` is a powerful Django middleware that enables dynamic routing of 
+requests to different URL configurations based on the domain of 
+incoming requests. 
+It also supports automatic redirection for specific domains and provides 
+options for shared common URLs. 
+This middleware is ideal for projects hosted across multiple domains or 
+with subdomain-specific functionalities.
 
-## Supported (tested) Versions
+Developed by **Ferhat Mousavi**.
+[ferhat.mousavi@gmail.com](mailto:ferhat.mousavi@gmail.com)  
 
-- Python: 3.10 and above
-- Django: 4 and above
+---
 
-## Sample Project
+## Features
 
-[dj-multidomain example](https://github.com/ferhat-mousavi/dj-multidomain-example)
+- **Domain-Based URL Routing**: Route requests to different URL configurations based on the domain.
+- **Subdomain Handling**: Easily manage subdomains and inject subdomain data into requests.
+- **Automatic Redirects**: Redirect specific domains to desired ones seamlessly.
+- **Shared URLs**: Define common URLs accessible across all domains.
+- **Fallback Support**: Set a default domain for unrecognized requests (DEBUG mode).
+
+---
 
 ## Installation
 
-1. **Install the package using pip:**
+### 1. Install the Package
 
-```
-   pip install dj-multidomain
+Install `dj-multidomain` using pip:
+
+```bash
+pip install dj-multidomain
 ```
 
-2. **Add the Middleware to your Django settings:**
+Ensure `publicsuffix2` is also installed:
 
+```bash
+pip install publicsuffix2
 ```
+
+### 2. Add Middleware
+
+In your `settings.py`, add the middleware to the `MIDDLEWARE` list:
+
+```python
 MIDDLEWARE = [
     ...
-    'dj-multidomain.middleware.MultipleDomainMiddleware',
+    'dj_multidomain.middleware.MultipleDomainMiddleware',
     ...
 ]
 ```
 
-3. **Configure the domains and their associated URL configurations in settings.py using the MULTI_DOMAIN_CONFIG setting:**
+---
 
-```
+## Configuration
+
+### 1. Map Domains to URL Configurations
+
+Use `MULTI_DOMAIN_CONFIG` to map domains to their respective URL configuration files. Add this to `settings.py`:
+
+```python
 MULTI_DOMAIN_CONFIG = {
-    'domain1.com': 'path.to.urls_for_domain1',
-    'domain2.com': 'path.to.urls_for_domain2',
-    ...
+    'example.com': 'project.urls_example_com',
+    'example.org': 'project.urls_example_org',
 }
 ```
 
-sample `path.to.urls_for_domain1` file
+### 2. Redirect Domains (Optional)
 
-```
-from django.urls import path, include
+If you want to redirect specific domains to others, use `MULTI_REDIRECT_CONFIG`:
 
-urlpatterns = [
-    path('', include('domain1_app.urls')),
-]
-```
-
-4. **(Optional for redirect domains)Configure the domains and their associated domain configurations in settings.py
-   using the MULTI_REDIRECT_CONFIG setting:**
-
-```
+```python
 MULTI_REDIRECT_CONFIG = {
-    "not_my_desire_domain1.com": "my_desire_domain1.com",
-    "not_my_desire_domain2.com": "my_desire_domain2.com",
-    ...
+    'www.example.com': 'example.com',
+    'oldsite.org': 'newsite.org',
 }
 ```
 
-5. **(Optional) For common URLs accessible from any domain, specify the COMMON_URLS setting:**
+### 3. Add Common URLs (Optional)
+
+Define shared URLs that are accessible from any domain using `COMMON_URLS`:
+
+```python
+COMMON_URLS = 'project.urls_common'
+```
+
+### 4. Subdomain Configuration (Optional)
+
+If subdomain data needs to be injected into requests, use `MULTI_SUBDOMAIN_CONFIG` to define parameter names:
+
+```python
+MULTI_SUBDOMAIN_CONFIG = ['subdomain1', 'subdomain2']
+```
+
+### 5. Default Domain (Optional)
+
+Set a fallback URL configuration for unrecognized domains (only active in DEBUG mode):
+
+```python
+DEFAULT_DOMAIN = 'example.com'
+```
+
+---
+
+## Example Project Structure
+
+Below is a typical project structure for `dj-multidomain`:
 
 ```
-COMMON_URLS = 'path.to.common_urls'
+project/
+├── project/
+│   ├── __init__.py
+│   ├── settings.py
+│   ├── urls_common.py
+│   ├── urls_example_com.py
+│   ├── urls_example_org.py
+│   ├── views.py
+├── manage.py
 ```
 
-sample `path.to.common_urls` file
+---
 
-```
-from django.contrib import admin
+## Example Usage
+
+### 1. Domain-Specific URL Configuration
+
+Create domain-specific URL files, e.g., `urls_example_com.py`:
+
+```python
 from django.urls import path
+from . import views
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
+    path('', views.home, name='home'),
+    path('about/', views.about, name='about'),
 ]
 ```
 
-6. **(Optional) If you are in DEBUG mode and want a fallback for unrecognized domains, specify the DEFAULT_DOMAIN
-   setting:**
+### 2. Common URL Configuration
 
+Define shared URLs in `urls_common.py`:
+
+```python
+from django.urls import path
+from . import views
+
+urlpatterns = [
+    path('contact/', views.contact, name='contact'),
+]
 ```
-DEFAULT_DOMAIN = 'path.to.default_urls'
+
+### 3. Subdomain Handling
+
+Subdomains will be available as attributes in the `request` object. For example:
+
+```python
+def subdomain_example(request):
+    subdomain1 = getattr(request, 'subdomain1', None)
+    return HttpResponse(f"Subdomain 1: {subdomain1}")
 ```
 
-## Usage
+---
 
-With the middleware set up, incoming requests will be routed based on their domain to the specified URL configurations.
-URLs defined in COMMON_URLS will be accessible from any domain.
+## Sample Configuration
 
-## Support & Contribution
+Here’s a complete example of `settings.py` for `dj-multidomain`:
 
-For issues, feedback, or feature requests, please open an issue on the GitHub repository. Contributions are welcome;
-feel free to submit a pull request.
+```python
+MIDDLEWARE = [
+    ...
+    'dj_multidomain.middleware.MultipleDomainMiddleware',
+    ...
+]
+
+MULTI_DOMAIN_CONFIG = {
+    'example.com': 'project.urls_example_com',
+    'example.org': 'project.urls_example_org',
+}
+
+MULTI_REDIRECT_CONFIG = {
+    'www.example.com': 'example.com',
+}
+
+MULTI_SUBDOMAIN_CONFIG = ['subdomain1', 'subdomain2']
+
+COMMON_URLS = 'project.urls_common'
+
+DEFAULT_DOMAIN = 'example.com'
+```
+
+---
+
+## Supported Versions
+
+- **Python**: 3.10 and above
+- **Django**: 4.0 and above
+
+---
+
+## Sample Project
+
+Explore a sample implementation:  
+[GitHub: dj-multidomain Example](https://github.com/ferhat-mousavi/dj-multidomain-example)
+
+---
+
+## Contribution & Support
+
+- For issues or feedback, open an issue in the [GitHub repository](https://github.com/ferhat-mousavi/dj-multidomain).
+- Contributions are welcome! Feel free to submit a pull request.
+
+---
+
+## License
+
+This project is licensed under the [GNU General Public License v3 (GPLv3)](https://www.gnu.org/licenses/gpl-3.0.en.html).

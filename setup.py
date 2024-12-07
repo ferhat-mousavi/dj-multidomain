@@ -2,10 +2,11 @@ from setuptools import setup, find_packages
 
 setup(
     name='dj-multidomain',
-    version='0.3.0',
+    version='0.4.0',
     packages=find_packages(),
     install_requires=[
         'django>=4.0',
+        'publicsuffix2>=2.0.2',
     ],
     classifiers=[
         "Development Status :: 4 - Beta",
@@ -16,6 +17,7 @@ setup(
         'Programming Language :: Python :: 3.10',
         'Programming Language :: Python :: 3.11',
         'Programming Language :: Python :: 3.12',
+        'Programming Language :: Python :: 3.13',
         'Framework :: Django',
         'Framework :: Django :: 4.0',
         'Framework :: Django :: 4.1',
