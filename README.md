@@ -1,7 +1,3 @@
-### Redesigned README for `dj-multidomain`
-
----
-
 # dj-multidomain
 
 ## Dynamic Multi-Domain Middleware for Django
